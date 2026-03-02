@@ -1,0 +1,106 @@
+===========================================================
+CLOUD-DRIVE STORAGE MICROSERVICE API DOCUMENTATION
+===========================================================
+
+This document provides details and usage instructions for the Google Drive 
+Storage API, designed to be integrated into any task management platform.
+
+-----------------------------------------------------------
+1. PRINCIPLES & CORE CONCEPTS
+-----------------------------------------------------------
+- Microservice: This platform acts as a standalone service for file management.
+- Identifiers: The API returns unique database IDs for folders and files. 
+  Your external platform should store these IDs as references for your projects/tasks.
+- Storage: Actual files are stored on Google Drive (Primary or Secondary).
+- Metadata: File names, paths, and user associations are stored in a local MySQL DB.
+
+-----------------------------------------------------------
+2. BASE API INFORMATION
+-------------------------------------------
+- Base URL: http://127.0.0.1:8000/api/drive
+- Default Format: JSON
+- Required Header: 
+    - Accept: application/json
+    - Content-Type: application/json (except for file uploads)
+
+-----------------------------------------------------------
+3. ENDPOINT DETAILS
+-----------------------------------------------------------
+
+A. CREATE FOLDER
+----------------
+Endpoint: POST /folders
+Description: Creates a folder on Google Drive and returns a storage ID.
+
+Request Body (JSON):
+{
+    "email": "user@example.com",
+    "folder_name": "Project Beta Assets",
+    "disk": "google" (Optional: "google" or "google_two")
+}
+
+Response (201 Created):
+{
+    "status": "success",
+    "data": {
+        "folder_id": 1,
+        "folder_name": "Project Beta Assets",
+        "disk": "google"
+    }
+}
+
+B. UPLOAD FILE
+--------------
+Endpoint: POST /upload
+Description: Uploads a file to a specific folder or root.
+
+Request Body (form-data):
+- email: "user@example.com"
+- file: [FILE_BINARY]
+- folder_id: 1 (Optional: ID returned from Create Folder)
+
+Response (201 Created):
+{
+    "status": "success",
+    "data": {
+        "file_id": 5,
+        "file_name": "document.pdf",
+        "path": "Project Beta Assets/document.pdf"
+    }
+}
+
+C. GET FILE METADATA
+--------------------
+Endpoint: GET /files/{id}
+Description: Retrieves database record and folder association for a file.
+
+Response (200 OK):
+{
+    "status": "success",
+    "data": {
+        "id": 5,
+        "file_id": "...",
+        "file_name": "document.pdf",
+        "folder": { ... }
+    }
+}
+
+D. DOWNLOAD FILE
+----------------
+Endpoint: GET /download/{id}
+Description: Streams the file directly from Google Drive.
+
+-----------------------------------------------------------
+4. USAGE EXAMPLE (INTEGRATION)
+-----------------------------------------------------------
+1. User starts a task on your "Task Management Platform".
+2. Your platform calls POST /api/drive/folders to create a project folder.
+3. You save the returned "folder_id" (e.g., 42) in your Project database.
+4. When a freelancer uploads a file for that task, you call POST /api/drive/upload 
+   passing "folder_id": 42.
+5. You store the returned "file_id" in your Task Attachment table.
+6. When anyone wants to view the file, you redirect them to GET /api/drive/download/{file_id}.
+
+===========================================================
+END OF DOCUMENTATION
+===========================================================

@@ -1,0 +1,77 @@
+===========================================================
+HOSTINGER DEPLOYMENT GUIDE - LARAVEL CLOUD-DRIVE
+===========================================================
+
+To get your Laravel application running on Hostinger, you need to perform 
+the following steps via SSH or the Hostinger File Manager/Terminal.
+
+1. DIRECTORY STRUCTURE (CRITICAL)
+---------------------------------
+Laravel's entry point is the /public folder. Hostinger uses /public_html.
+- OPTION A: Move contents of your /public folder to /public_html and update index.php paths.
+- OPTION B (Recommended): Create a Symbolic Link.
+  Run: ln -s ~/repo_folder/public ~/public_html
+
+2. ENVIRONMENT SETUP
+--------------------
+- Ensure your .env file is uploaded to the server root.
+- Update DB_HOST, DB_DATABASE, DB_USERNAME, and DB_PASSWORD to match your Hostinger MySQL details.
+- Ensure APP_URL matches your domain (e.g., https://yourdomain.com).
+
+3. ESSENTIAL COMMANDS (Via SSH)
+-------------------------------
+Run these commands in your project root directory:
+
+A. Install Dependencies:
+   composer install --optimize-autoloader --no-dev
+
+B. Generate App Key (if not set):
+   php artisan key:generate
+
+C. Run Migrations:
+   php artisan migrate --force
+
+D. Create Storage Link (Optional - Not needed for Google Drive):
+   php artisan storage:link
+
+E. Optimize Performance (Required for production):
+   php artisan config:cache
+   php artisan route:cache
+   php artisan view:cache
+
+4. PERMISSIONS
+--------------
+Ensure these folders are writable by the web server (usually CHMOD 775):
+- storage
+- bootstrap/cache
+
+5. PHP VERSION
+--------------
+Go to Hostinger Control Panel -> Advanced -> PHP Configuration.
+- Ensure your PHP version is 8.2 or 8.3.
+
+6. API MICROSERVICE NOTES
+-------------------------
+- If you are calling the API from another platform, ensure that platform is 
+  not blocked by Hostinger's Firewall or ModSecurity if it uses unconventional headers.
+
+7. TROUBLESHOOTING
+------------------
+A. "Doctrine\Inflector\WordInflector not found":
+   This means your 'vendor' folder is missing files.
+   -> Solution 1 (SSH): Run `composer install --no-dev` again.
+   -> Solution 2 (FTP): Delete the `vendor` folder and re-upload it completely. 
+      Sometimes FTP misses small files. Use a ZIP file to upload and extract 
+      on the server to avoid missing files.
+
+B. General 500 Error:
+1. Open your .env file and set APP_DEBUG=true (temporarily).
+2. Refresh the page to see the exact error message.
+3. Clear caches:
+   php artisan optimize:clear
+4. Check the logs:
+   storage/logs/laravel.log
+
+===========================================================
+END OF GUIDE
+===========================================================
