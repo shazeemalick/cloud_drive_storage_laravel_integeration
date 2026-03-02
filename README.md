@@ -1,59 +1,100 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# CloudDrive Microservice 🚀
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A premium, folder-based Google Drive storage microservice built with Laravel. This platform allows users to manage multiple Google Drive accounts, create folders, and upload/download assets through both a beautiful web dashboard and a RESTful API.
 
-## About Laravel
+Designed to be integrated as a backend storage layer for task management platforms, freelance marketplaces, or any application requiring cloud asset management.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## ✨ Key Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Dual-Drive Support**: Connect and manage multiple Google Drive accounts (Primary & Secondary) simultaneously.
+- **Email-Based Authentication**: Seamless, password-less entry for users using only their email addresses.
+- **RESTful API**: Full API support for external integrations (Create Folders, Upload Files, Download Assets).
+- **Intelligent Routing**: Automatically routes file uploads to the correct Google Drive account based on folder selection.
+- **Premium Dashboard**: A modern, high-end "Command Center" UI for visual asset management.
+- **MySQL Persistence**: Tracks file metadata, folder hierarchies, and disk associations locally for ultra-fast retrieval.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🛠️ Tech Stack
 
-## Learning Laravel
+- **Backend**: Laravel 12.x
+- **Storage**: Google Drive API (via `yaza/laravel-google-drive-storage`)
+- **Database**: MySQL 8.x
+- **API Security**: Laravel Sanctum
+- **Frontend**: Blade with Modern Vanilla CSS (Glassmorphism & Radial Gradients)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## 🚀 Getting Started
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Prerequisites
 
-## Laravel Sponsors
+- PHP 8.2 or higher
+- Composer
+- MySQL Database
+- Google Cloud Console Project (with Drive API enabled)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Installation
 
-### Premium Partners
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/yourusername/clouddrive-microservice.git
+   cd clouddrive-microservice
+   ```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+2. **Install dependencies**:
+   ```bash
+   composer install
+   ```
 
-## Contributing
+3. **Environment Setup**:
+   Copy the example environment file and configure your credentials:
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+4. **Database Configuration**:
+   Update your `.env` with your MySQL credentials and run migrations:
+   ```bash
+   php artisan migrate
+   ```
 
-## Code of Conduct
+### 🔑 Google Drive Configuration
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Add your Google API credentials to the `.env` file:
 
-## Security Vulnerabilities
+```env
+# PRIMARY DRIVE
+GOOGLE_DRIVE_CLIENT_ID=your_id
+GOOGLE_DRIVE_CLIENT_SECRET=your_secret
+GOOGLE_DRIVE_REFRESH_TOKEN=your_refresh_token
+GOOGLE_DRIVE_FOLDER=uploads
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# SECONDARY DRIVE (Optional)
+GOOGLE_DRIVE_CLIENT_ID_TWO=your_id_2
+GOOGLE_DRIVE_CLIENT_SECRET_TWO=your_secret_2
+GOOGLE_DRIVE_REFRESH_TOKEN_TWO=your_refresh_token_2
+GOOGLE_DRIVE_FOLDER_TWO=uploads
+```
 
-## License
+## 📡 API Usage
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+The microservice provides clean endpoints for external platform integration.
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/drive/folders` | Create a folder on Drive & get its ID |
+| `POST` | `/api/drive/upload` | Upload a file to a specific folder |
+| `GET` | `/api/drive/files/{id}` | Retrieve file metadata |
+| `GET` | `/api/drive/download/{id}` | Direct file download stream |
+
+For full details, refer to the [API Documentation](api_documentation.txt).
+
+## 🌍 Deployment
+
+To host this on platforms like Hostinger:
+1. Ensure PHP version is 8.2+.
+2. Point your domain to the `/public` directory.
+3. Run `php artisan optimize` for production speed.
+4. See `deployment_guide.txt` for detailed troubleshooting.
+
+## 📄 License
+
+The Laravel framework is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).
